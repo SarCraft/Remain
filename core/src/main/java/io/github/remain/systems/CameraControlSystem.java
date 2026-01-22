@@ -1,0 +1,90 @@
+package io.github.remain.systems;
+
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import io.github.remain.service.input.InputService;
+import io.github.remain.system.GameSystem;
+import io.github.remain.system.isometric.IsometricProjection;
+
+/**
+ * Handles camera movement, rotation, and zoom controls.
+ * 
+ * @author SarCraft
+ * @since 1.0
+ */
+public class CameraControlSystem implements GameSystem {
+    
+    private final InputService inputService;
+    private final OrthographicCamera camera;
+    
+    private boolean enabled = true;
+    
+    private static final float CAMERA_SPEED = 500f;
+    private static final float ZOOM_MIN = 0.3f;
+    private static final float ZOOM_MAX = 3.0f;
+    private static final float ZOOM_STEP = 0.1f;
+    
+    public CameraControlSystem(InputService inputService, OrthographicCamera camera) {
+        this.inputService = inputService;
+        this.camera = camera;
+    }
+    
+    @Override
+    public void update(float delta) {
+        if (!enabled) return;
+        handleCameraMovement(delta);
+    }
+    
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    
+    /**
+     * Handles keyboard-based camera movement.
+     */
+    private void handleCameraMovement(float delta) {
+        float moveSpeed = CAMERA_SPEED * delta;
+        
+        if (inputService.isKeyPressed(Input.Keys.W) || inputService.isKeyPressed(Input.Keys.UP)) {
+            camera.position.y += moveSpeed;
+        }
+        if (inputService.isKeyPressed(Input.Keys.S) || inputService.isKeyPressed(Input.Keys.DOWN)) {
+            camera.position.y -= moveSpeed;
+        }
+        if (inputService.isKeyPressed(Input.Keys.A) || inputService.isKeyPressed(Input.Keys.LEFT)) {
+            camera.position.x -= moveSpeed;
+        }
+        if (inputService.isKeyPressed(Input.Keys.D) || inputService.isKeyPressed(Input.Keys.RIGHT)) {
+            camera.position.x += moveSpeed;
+        }
+        
+        camera.update();
+    }
+    
+    /**
+     * Handles zoom via scroll wheel.
+     */
+    public void handleZoom(float scrollAmount) {
+        camera.zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, camera.zoom + scrollAmount * ZOOM_STEP));
+    }
+    
+    /**
+     * Rotates the camera counter-clockwise.
+     */
+    public void rotateCounterClockwise() {
+        IsometricProjection.rotateCameraCounterClockwise();
+    }
+    
+    /**
+     * Rotates the camera clockwise.
+     */
+    public void rotateClockwise() {
+        IsometricProjection.rotateCameraClockwise();
+    }
+}
