@@ -1,4 +1,4 @@
-package io.github.remain.service.player;
+package io.github.remain.entity;
 
 public class Player {
     private int lvl = 0;
