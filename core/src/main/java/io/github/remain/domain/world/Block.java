@@ -5,19 +5,14 @@ import io.github.remain.domain.common.Position3D;
 import java.util.Objects;
 
 /**
- * Represents a single block in the game world.
- * A block is the fundamental building element of the world. Each block has a
- * position and a type that determines its appearance and behavior.
- * Design Rationale:
- *    - Immutable position (blocks don't move)
- *    - Mutable type (allows changing terrain, e.g., digging)
- *    - Position as value object (Position3D) for type safety
- *    - Lightweight design for memory efficiency (millions of blocks)
+ * Représente un seul bloc (cube) dans le monde du jeu.
  * 
- * Thread Safety: This class is not thread-safe due to mutable type.
- * Synchronize externally if accessed from multiple threads.
- * @author SarCraft
- * @since 1.0
+ * Un bloc est l'élément de base du monde. Chaque bloc a :
+ * - Une position fixe (les blocs ne bougent pas)
+ * - Un type qui détermine son apparence (herbe, terre, pierre, eau...)
+ * 
+ * Le type peut changer (exemple : creuser transforme herbe en air)
+ * mais la position reste toujours la même.
  */
 public final class Block {
     
@@ -25,22 +20,19 @@ public final class Block {
     private BlockType type;
     
     /**
-     * Creates a new Block at the specified position with the given type.
-     * @param x Grid column coordinate
-     * @param y Elevation coordinate
-     * @param z Grid row coordinate
-     * @param type Block type
-     * @throws NullPointerException if type is null
+     * Crée un nouveau bloc à la position spécifiée.
+     * 
+     * @param x Colonne de la grille
+     * @param y Altitude
+     * @param z Ligne de la grille
+     * @param type Type du bloc (herbe, terre, pierre...)
      */
     public Block(int x, int y, int z, BlockType type) {
         this(new Position3D(x, y, z), type);
     }
     
     /**
-     * Creates a new Block at the specified position with the given type.
-     * @param position Block position
-     * @param type Block type
-     * @throws NullPointerException if position or type is null
+     * Crée un nouveau bloc à la position spécifiée.
      */
     public Block(Position3D position, BlockType type) {
         this.position = Objects.requireNonNull(position, "position cannot be null");
@@ -48,66 +40,58 @@ public final class Block {
     }
     
     /**
-     * Gets the block's position.
-     * @return Immutable position
+     * Retourne la position du bloc.
      */
     public Position3D getPosition() {
         return position;
     }
     
     /**
-     * Gets the block's X coordinate (grid column).
-     * @return X coordinate
+     * Retourne la coordonnée X (colonne de la grille).
      */
     public int getX() {
         return position.x();
     }
     
     /**
-     * Gets the block's Y coordinate (elevation/height).
-     * @return Y coordinate
+     * Retourne la coordonnée Y (altitude/hauteur).
      */
     public int getY() {
         return position.y();
     }
     
     /**
-     * Gets the block's Z coordinate (grid row).
-     * @return Z coordinate
+     * Retourne la coordonnée Z (ligne de la grille).
      */
     public int getZ() {
         return position.z();
     }
     
     /**
-     * Gets the block type.
-     * @return Block type
+     * Retourne le type du bloc.
      */
     public BlockType getType() {
         return type;
     }
     
     /**
-     * Sets the block type.
-     * Use this for terrain modifications (e.g., digging, placing blocks).
-     * @param type New block type
-     * @throws NullPointerException if type is null
+     * Change le type du bloc.
+     * 
+     * Utile pour les modifications de terrain (creuser, placer des blocs).
      */
     public void setType(BlockType type) {
         this.type = Objects.requireNonNull(type, "type cannot be null");
     }
     
     /**
-     * Checks if this block is walkable (based on its type).
-     * @return true if walkable, false otherwise
+     * Vérifie si on peut marcher sur ce bloc.
      */
     public boolean isWalkable() {
         return type.isWalkable();
     }
     
     /**
-     * Checks if this block is solid (based on its type).
-     * @return true if solid, false otherwise
+     * Vérifie si ce bloc est solide (bloque le mouvement).
      */
     public boolean isSolid() {
         return type.isSolid();

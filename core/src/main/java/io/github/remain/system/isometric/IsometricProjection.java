@@ -1,26 +1,18 @@
 package io.github.remain.system.isometric;
 
 /**
- * Pure mathematical projection service for isometric coordinate transformations.
- * This class provides stateless, pure functions for converting between:
- *    - 3D world coordinates (grid x, y, z)
- *    - 2D screen coordinates (pixel x, y)
- *    - Rotated coordinates (for camera rotation)
+ * Système de projection isométrique (vue en diagonale).
  * 
- * Design Rationale:
- *    - Stateless = thread-safe and easily testable
- *    - Pure functions = no side effects, predictable behavior
- *    - Separated concerns = coordinate math independent of rendering
- *    - Performance = no object allocation in hot paths
+ * Cette classe convertit les coordonnées 3D du monde (X, Y, Z) en
+ * coordonnées 2D à l'écran (X, Y). C'est ce qui crée l'effet de vue
+ * en diagonale, comme dans les anciens jeux vidéo.
  * 
- * Coordinate System:
- *    - World: X (right), Y (up), Z (forward)
- *    - Screen: X (right), Y (down as per screen coordinates)
- *    - Isometric: 2:1 ratio (32x16 diamond grid)
+ * Système de coordonnées :
+ * - Monde 3D : X (droite), Y (haut), Z (avant)
+ * - Écran 2D : X (droite), Y (bas)
+ * - Ratio isométrique : 2:1 (losange de 32x16 pixels)
  * 
- * Tile Dimensions: 32x32 pixel tiles with 16px visual height
- * @author SarCraft
- * @since 1.0
+ * Dimensions des tuiles : 32x32 pixels avec 16px de hauteur visuelle
  */
 public final class IsometricProjection {
     
@@ -43,19 +35,22 @@ public final class IsometricProjection {
     private static int cameraRotation = 0;
     
     /**
-     * Private constructor - this is a utility class with static methods only.
+     * Constructeur privé - Cette classe contient seulement des méthodes statiques.
      */
     private IsometricProjection() {
         throw new UnsupportedOperationException("Utility class cannot be instantiated");
     }
     
     /**
-     * Converts 3D grid coordinates to 2D screen coordinates.
-     * Applies camera rotation before projection.
-     * @param gridX Grid column (X)
-     * @param gridY Elevation (Y)
-     * @param gridZ Grid row (Z)
-     * @return Array [screenX, screenY] in pixels
+     * Convertit des coordonnées 3D de grille en coordonnées 2D à l'écran.
+     * 
+     * Cette fonction applique la "magie" isométrique : elle prend une position
+     * dans le monde (X, Y, Z) et calcule où la dessiner à l'écran (X, Y).
+     * 
+     * @param gridX Colonne de la grille (X)
+     * @param gridY Altitude (Y)
+     * @param gridZ Ligne de la grille (Z)
+     * @return Tableau [posX écran, posY écran] en pixels
      */
     public static float[] gridToScreen(int gridX, int gridY, int gridZ) {
         // Apply camera rotation

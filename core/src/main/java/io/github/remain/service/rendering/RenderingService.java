@@ -5,69 +5,67 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 
 /**
- * Service interface for rendering operations and batch management.
- * This service centralizes rendering concerns and provides utilities for
- * efficient batch rendering, camera management, and render order.
- * Design Rationale:
- *    - Centralizes SpriteBatch lifecycle (begin/end)
- *    - Manages render layers and sorting
- *    - Provides utilities for common rendering tasks
- *    - Abstracts rendering pipeline for future changes (e.g., 3D, post-processing)
+ * Service de gestion du rendu (dessin à l'écran).
  * 
- * Usage Pattern:
- * {@code
- * RenderingService rendering = serviceRegistry.get(RenderingService.class);
- * // Begin rendering to world camera
- * rendering.beginWorld();
- * // ... draw world objects ...
- * rendering.end();
- * // Begin rendering to UI camera
- * rendering.beginUi();
- * // ... draw UI elements ...
- * rendering.end();
- * }
- * @author SarCraft
- * @since 1.0
+ * Ce service centralise tout ce qui concerne le dessin et fournit
+ * des utilitaires pour dessiner efficacement, gérer les caméras,
+ * et l'ordre de rendu.
+ * 
+ * Avantages :
+ * - Centralise la gestion du SpriteBatch (begin/end)
+ * - Gère les couches de rendu et le tri
+ * - Fournit des utilitaires pour les tâches courantes
+ * - Abstrait le pipeline de rendu pour les futurs changements
+ * 
+ * Exemple d'utilisation :
+ *   RenderingService rendering = serviceRegistry.get(RenderingService.class);
+ *   
+ *   // Dessiner le monde
+ *   rendering.beginWorld();
+ *   // ... dessiner les objets du monde ...
+ *   rendering.end();
+ *   
+ *   // Dessiner l'interface
+ *   rendering.beginUi();
+ *   // ... dessiner les menus et textes ...
+ *   rendering.end();
  */
 public interface RenderingService extends Disposable {
     
     /**
-     * Begins a rendering batch with the world camera projection.
-     * Must be matched with a call to {@link #end()}.
+     * Démarre le dessin avec la caméra du monde.
+     * Doit être suivi d'un appel à end().
      */
     void beginWorld();
     
     /**
-     * Begins a rendering batch with the UI camera projection.
-     * Must be matched with a call to {@link #end()}.
+     * Démarre le dessin avec la caméra de l'interface.
+     * Doit être suivi d'un appel à end().
      */
     void beginUi();
     
     /**
-     * Begins a rendering batch with a custom camera projection.
-     * Must be matched with a call to {@link #end()}.
-     * @param camera The camera to use for projection
+     * Démarre le dessin avec une caméra personnalisée.
+     * Doit être suivi d'un appel à end().
      */
     void begin(Camera camera);
     
     /**
-     * Ends the current rendering batch and flushes all draw calls.
-     * Must be called after {@link #beginWorld()}, {@link #beginUi()},
-     * or {@link #begin(Camera)}.
+     * Termine le dessin et envoie toutes les commandes de dessin au GPU.
+     * Doit être appelé après beginWorld(), beginUi() ou begin().
      */
     void end();
     
     /**
-     * Gets the sprite batch for manual rendering.
-     * Warning: Only use this for advanced cases where you need direct
-     * batch access. Prefer using begin/end methods.
-     * @return The sprite batch
+     * Récupère le SpriteBatch pour un dessin manuel.
+     * 
+     * Attention : Utilisez ceci seulement pour des cas avancés.
+     * Préférez utiliser les méthodes begin/end.
      */
     SpriteBatch getBatch();
     
     /**
-     * Checks if the batch is currently rendering (between begin/end).
-     * @return true if rendering, false otherwise
+     * Vérifie si on est en train de dessiner (entre begin/end).
      */
     boolean isRendering();
 }

@@ -1,32 +1,20 @@
 package io.github.remain.domain.common;
 
 /**
- * Immutable value object representing a 3D position in the game world.
- * This record encapsulates x, y, z coordinates following the value object pattern.
- * Being immutable, it can be safely shared across threads and used as map keys.
- * Design Rationale:
- *    - Immutability prevents bugs from unexpected modifications
- *    - Records provide automatic equals/hashCode/toString
- *    - Type safety vs using raw int[] or Vector3
- *    - Domain-specific meaning vs generic Point3D
+ * Représente une position 3D dans le monde du jeu.
  * 
- * Coordinate System:
- *    - X: Grid column (increases right)
- *    - Y: Elevation/height (increases up)
- *    - Z: Grid row (increases forward)
+ * Contient trois coordonnées :
+ * - X : Colonne de la grille (augmente vers la droite)
+ * - Y : Altitude/hauteur (augmente vers le haut)
+ * - Z : Ligne de la grille (augmente vers l'avant)
  * 
- * @param x Grid column coordinate
- * @param y Elevation coordinate (height)
- * @param z Grid row coordinate
- * @author SarCraft
- * @since 1.0
+ * Cette position est immutable (ne peut pas être modifiée après création).
  */
 public record Position3D(int x, int y, int z) {
     
     /**
-     * Creates a new Position3D with validation.
-     * Currently allows any integer values. Add validation if needed
-     * (e.g., non-negative coordinates).
+     * Crée une nouvelle position 3D.
+     * (On peut ajouter de la validation ici si nécessaire)
      */
     public Position3D {
         // Compact constructor for validation
@@ -35,11 +23,12 @@ public record Position3D(int x, int y, int z) {
     }
     
     /**
-     * Creates a new position offset by the specified amounts.
-     * @param dx Delta X
-     * @param dy Delta Y
-     * @param dz Delta Z
-     * @return New position
+     * Crée une nouvelle position décalée par rapport à celle-ci.
+     * 
+     * @param dx Décalage en X
+     * @param dy Décalage en Y
+     * @param dz Décalage en Z
+     * @return Nouvelle position
      */
     public Position3D offset(int dx, int dy, int dz) {
         return new Position3D(x + dx, y + dy, z + dz);

@@ -15,7 +15,7 @@ import io.github.remain.core.ServiceRegistry;
  *    - Enforces separation of update and render logic
  *    - Tracks screen lifecycle state for debugging
  * 
- * <p><b>Lifecycle Order:</b></p>
+ * Lifecycle Order:
  * <ul>
  *   <li>Constructor - Initialize screen-specific state</li>
  *   <li>show() - Screen becomes active, load resources</li>
@@ -25,7 +25,7 @@ import io.github.remain.core.ServiceRegistry;
  *   <li>dispose() - Screen destroyed, release all resources</li>
  * </ul>
  * 
- * <p><b>Usage Pattern:</b></p>
+ * Usage Pattern:
  * {@code
  * public class MyScreen extends BaseScreen {
  *     public MyScreen(ServiceRegistry services, GameContext context) {
@@ -33,15 +33,15 @@ import io.github.remain.core.ServiceRegistry;
  *     }
  *     @Override
  *     protected void onShow() {
- *         // Load screen-specific resources
+ *          Load screen-specific resources
  *     }
  *     @Override
  *     protected void update(float delta) {
- *         // Update game logic
+ *         / Update game logic
  *     }
  *     @Override
  *     protected void renderFrame(float delta) {
- *         // Render graphics
+ *          Render graphics
  *     }
  * }
  * }
@@ -104,7 +104,7 @@ public abstract class BaseScreen implements Screen {
      *   <li>{@link #renderFrame(float)} - Render graphics</li>
      * </ul>
      * 
-     * <p>This separation makes it easier to reason about game logic vs rendering.</p>
+     * This separation makes it easier to reason about game logic vs rendering.
      * 
      * @param delta Time in seconds since last frame
      */

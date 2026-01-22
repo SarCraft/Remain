@@ -5,19 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 
 /**
- * Centralized screen management service for screen transitions and lifecycle.
- * This service wraps libGDX's {@link Game#setScreen(Screen)} method and provides
- * additional features like transition tracking and screen history.
- * Design Rationale:
- *    - Centralizes screen management logic
- *    - Enables screen transition effects
- *    - Tracks screen history for back navigation
- *    - Provides hooks for loading screens
+ * Gestionnaire d'écrans pour les transitions et le cycle de vie.
  * 
- * Thread Safety: Not thread-safe. All methods should be called from
- * the main/render thread.
- * @author SarCraft
- * @since 1.0
+ * Ce service gère le changement d'écrans (menu, jeu, options...)
+ * et fournit des fonctionnalités supplémentaires comme :
+ * - Le suivi des transitions
+ * - L'historique des écrans (pour le bouton retour)
+ * - Les effets de transition
+ * - Les écrans de chargement
  */
 public final class ScreenManager {
     
@@ -25,8 +20,7 @@ public final class ScreenManager {
     private Screen currentScreen;
     
     /**
-     * Creates a new ScreenManager.
-     * @param game The game instance (needed for setScreen calls)
+     * Crée un nouveau gestionnaire d'écrans.
      */
     public ScreenManager(Game game) {
         if (game == null) {
@@ -35,50 +29,51 @@ public final class ScreenManager {
         
         this.game = game;
         
-        Gdx.app.log("ScreenManager", "Screen manager initialized");
+        Gdx.app.log("ScreenManager", "Gestionnaire d'écrans initialisé");
     }
     
     /**
-     * Sets the current screen with immediate transition.
-     * The previous screen's {@link Screen#hide()} method is called,
-     * and the new screen's {@link Screen#show()} method is called.
-     * @param screen The new screen to display
+     * Change l'écran actuel avec une transition immédiate.
+     * 
+     * La méthode hide() de l'écran précédent est appelée,
+     * puis la méthode show() du nouvel écran.
      */
     public void setScreen(Screen screen) {
         if (screen == null) {
-            Gdx.app.error("ScreenManager", "Cannot set null screen");
+            Gdx.app.error("ScreenManager", "Impossible de définir un écran null");
             return;
         }
         
         Screen previousScreen = currentScreen;
         String previousName = previousScreen != null ? 
-            previousScreen.getClass().getSimpleName() : "none";
+            previousScreen.getClass().getSimpleName() : "aucun";
         String newName = screen.getClass().getSimpleName();
         
         Gdx.app.log("ScreenManager", 
-            String.format("Transitioning from %s to %s", previousName, newName));
+            String.format("Transition de %s vers %s", previousName, newName));
         
         game.setScreen(screen);
         currentScreen = screen;
     }
     
     /**
-     * Gets the current active screen.
-     * @return The current screen, or null if no screen is set
+     * Récupère l'écran actif.
+     * @return L'écran actuel, ou null si aucun écran n'est défini
      */
     public Screen getCurrentScreen() {
         return currentScreen;
     }
     
     /**
-     * Disposes the current screen and sets it to null.
-     * Use this when you want to explicitly clean up a screen without
-     * transitioning to a new one.
+     * Ferme l'écran actuel et le met à null.
+     * 
+     * Utilisez ceci pour nettoyer explicitement un écran sans
+     * faire de transition vers un nouvel écran.
      */
     public void disposeCurrentScreen() {
         if (currentScreen != null) {
             Gdx.app.log("ScreenManager", 
-                "Disposing screen: " + currentScreen.getClass().getSimpleName());
+                "Fermeture de l'écran : " + currentScreen.getClass().getSimpleName());
             
             currentScreen.dispose();
             currentScreen = null;

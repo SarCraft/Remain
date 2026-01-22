@@ -7,13 +7,11 @@ import io.github.remain.core.GameContext;
 import io.github.remain.service.rendering.RenderingService;
 
 /**
- * Default implementation of {@link RenderingService}.
- * This implementation manages the {@link SpriteBatch} lifecycle and provides
- * convenient methods for switching between world and UI rendering.
- * Thread Safety: Not thread-safe. All methods must be called from
- * the render thread.
- * @author SarCraft
- * @since 1.0
+ * Implémentation du service de rendu.
+ * 
+ * Cette classe gère le cycle de vie du SpriteBatch et fournit
+ * des méthodes pratiques pour passer entre le rendu du monde
+ * et le rendu de l'interface.
  */
 public final class RenderingServiceImpl implements RenderingService {
     
@@ -21,8 +19,7 @@ public final class RenderingServiceImpl implements RenderingService {
     private boolean rendering;
     
     /**
-     * Creates a new RenderingServiceImpl with the specified game context.
-     * @param context The game context containing batch and cameras
+     * Crée un nouveau service de rendu avec le contexte spécifié.
      */
     public RenderingServiceImpl(GameContext context) {
         if (context == null) {

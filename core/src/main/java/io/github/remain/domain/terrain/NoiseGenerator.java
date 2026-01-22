@@ -1,11 +1,13 @@
 package io.github.remain.domain.terrain;
 
 /**
- * Simplified Perlin noise generator for procedural generation.
- * This implementation uses multi-octave noise to create natural-looking terrain.
- * Uses seed-based pseudo-random generation for deterministic results.
- * @author SarCraft
- * @since 1.0
+ * Générateur de bruit de Perlin simplifié.
+ * 
+ * Crée du "bruit" (valeurs aléatoires lisses) utilisé pour générer
+ * des terrains naturels. Le même seed produit toujours le même bruit.
+ * 
+ * Concept : Au lieu de placer chaque bloc aléatoirement, on utilise
+ * des fonctions mathématiques pour créer des collines et vallées lisses.
  */
 public class NoiseGenerator {
     private final long seed;

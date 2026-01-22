@@ -1,66 +1,65 @@
 package io.github.remain.system;
 
 /**
- * Base interface for all game systems.
- * Systems represent discrete pieces of game logic that can be updated each
- * frame. They follow an ECS-inspired (Entity-Component-System) architecture.
- * Design Rationale:
- *    - Separates concerns (each system has one responsibility)
- *    - Enables/disables systems independently
- *    - Clear update order control
- *    - Testable in isolation
+ * Interface de base pour tous les systèmes du jeu.
  * 
- * Usage Pattern:
- * {@code
- * public class MySystem implements GameSystem {
- *     private boolean enabled = true;
- *     @Override
- *     public void update(float delta) {
- *         if (!enabled) return;
- *         // Update logic here
- *     }
- *     @Override
- *     public boolean isEnabled() {
- *         return enabled;
- *     }
- *     @Override
- *     public void setEnabled(boolean enabled) {
- *         this.enabled = enabled;
- *     }
- * }
- * }
- * @author SarCraft
- * @since 1.0
+ * Les systèmes représentent des morceaux de logique de jeu qui sont
+ * mis à jour à chaque frame. Ils suivent une architecture ECS
+ * (Entity-Component-System).
+ * 
+ * Avantages :
+ * - Sépare les responsabilités (chaque système a un rôle)
+ * - Peut activer/désactiver les systèmes indépendamment
+ * - Contrôle clair de l'ordre de mise à jour
+ * - Testable isolément
+ * 
+ * Exemple d'utilisation :
+ *   public class MonSysteme implements GameSystem {
+ *       private boolean enabled = true;
+ *       
+ *       @Override
+ *       public void update(float delta) {
+ *           if (!enabled) return;
+ *           // Logique de mise à jour ici
+ *       }
+ *       
+ *       @Override
+ *       public boolean isEnabled() { return enabled; }
+ *       
+ *       @Override
+ *       public void setEnabled(boolean enabled) { this.enabled = enabled; }
+ *   }
  */
 public interface GameSystem {
     
     /**
-     * Updates the system logic.
-     * Called once per frame. System should check {@link #isEnabled()}
-     * and return early if disabled.
-     * @param delta Time in seconds since last frame
+     * Met à jour la logique du système.
+     * 
+     * Appelée une fois par frame. Le système doit vérifier isEnabled()
+     * et s'arrêter immédiatement si désactivé.
+     * 
+     * @param delta Temps en secondes depuis la dernière frame
      */
     void update(float delta);
     
     /**
-     * Checks if the system is enabled.
-     * @return true if enabled, false otherwise
+     * Vérifie si le système est activé.
      */
     boolean isEnabled();
     
     /**
-     * Enables or disables the system.
-     * Disabled systems should skip all update logic.
-     * @param enabled true to enable, false to disable
+     * Active ou désactive le système.
+     * 
+     * Les systèmes désactivés doivent ignorer toute la logique de mise à jour.
      */
     void setEnabled(boolean enabled);
     
     /**
-     * Gets the system's priority for update order.
-     * Lower numbers update first. Default is 0.
-     * Use negative numbers for early systems (input),
-     * positive for late systems (rendering).
-     * @return Priority value
+     * Récupère la priorité du système pour l'ordre de mise à jour.
+     * 
+     * Les nombres plus bas sont mis à jour en premier. Par défaut = 0.
+     * Utilisez des nombres négatifs pour les systèmes précoces (entrées),
+     * et des nombres positifs pour les systèmes tardifs (rendu).
      */
     default int getPriority() {
         return 0;

@@ -5,16 +5,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
- * Immutable context holder for shared application-wide resources.
- * This class provides access to core libGDX resources that need to be shared
- * across screens and systems. It follows the immutability principle to prevent
- * accidental modifications.
- * Design Rationale: Instead of passing individual resources around or
- * using global statics, we bundle them in an immutable context object. This makes
- * dependencies explicit and facilitates testing.
- * Thread Safety: This class is immutable and thread-safe after construction.
- * @author SarCraft
- * @since 1.0
+ * Conteneur des ressources partagées du jeu.
+ * 
+ * Cette classe regroupe tous les outils de dessin et caméras utilisés
+ * dans tout le jeu. Au lieu de passer chaque outil séparément, on les
+ * regroupe ici pour simplifier le code.
+ * 
+ * Contient :
+ * - batch : l'outil qui dessine les images
+ * - worldCamera : la caméra qui regarde le monde
+ * - uiCamera : la caméra qui regarde l'interface
+ * - worldViewport : gère le redimensionnement du monde
+ * - uiViewport : gère le redimensionnement de l'interface
  */
 public record GameContext(
     SpriteBatch batch,
@@ -24,13 +26,8 @@ public record GameContext(
     Viewport uiViewport
 ) {
     /**
-     * Creates a new GameContext with the specified resources.
-     * @param batch The main SpriteBatch for rendering (shared across screens)
-     * @param worldCamera Camera for world/game rendering with projection
-     * @param uiCamera Separate camera for UI rendering (typically orthographic)
-     * @param worldViewport Viewport for world rendering (handles resize)
-     * @param uiViewport Viewport for UI rendering (handles resize)
-     * @throws NullPointerException if any parameter is null
+     * Crée un nouveau contexte avec tous les outils de dessin.
+     * Vérifie que tous les paramètres sont valides (non null).
      */
     public GameContext {
         // Compact constructor validation (Java 25 feature)
@@ -42,10 +39,8 @@ public record GameContext(
     }
     
     /**
-     * Updates both viewports when the window is resized.
-     * This should be called from the application's resize callback.
-     * @param width New window width in pixels
-     * @param height New window height in pixels
+     * Met à jour les viewports quand la fenêtre change de taille.
+     * Appelée automatiquement par GameApplication.resize().
      */
     public void resize(int width, int height) {
         worldViewport.update(width, height, false);
@@ -53,8 +48,8 @@ public record GameContext(
     }
     
     /**
-     * Updates the cameras for both viewports.
-     * This should be called once per frame before rendering.
+     * Met à jour les deux caméras.
+     * À appeler une fois par image avant de dessiner.
      */
     public void updateCameras() {
         worldCamera.update();
@@ -62,16 +57,16 @@ public record GameContext(
     }
     
     /**
-     * Sets the projection matrix for the batch to the world camera.
-     * Call this before rendering world objects.
+     * Active la caméra du monde pour dessiner le jeu.
+     * À appeler avant de dessiner les objets du monde.
      */
     public void applyWorldProjection() {
         batch.setProjectionMatrix(worldCamera.combined);
     }
     
     /**
-     * Sets the projection matrix for the batch to the UI camera.
-     * Call this before rendering UI elements.
+     * Active la caméra de l'interface pour dessiner l'UI.
+     * À appeler avant de dessiner les menus et textes.
      */
     public void applyUiProjection() {
         batch.setProjectionMatrix(uiCamera.combined);

@@ -7,24 +7,17 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Type-safe service locator for dependency management.
- * This registry provides a centralized location for accessing application services
- * without resorting to global static variables or passing dependencies through
- * every constructor.
- * Design Rationale: While dependency injection frameworks exist (Guice, Spring),
- * they add complexity for game development. This lightweight service locator provides
- * type safety and explicit service lifecycle management.
- * Usage Pattern:
- * {@code
- * Registration (in GameApplication.create())
- * serviceRegistry.register(AssetService.class, new AssetServiceImpl());
- * Retrieval (in screens/systems)
- * AssetService assets = serviceRegistry.get(AssetService.class);
- * }
- * Thread Safety: Not thread-safe. Register all services during initialization
- * on the main thread before concurrent access.
- * @author SarCraft
- * @since 1.0
+ * Registre des services du jeu ("boîte à outils").
+ * 
+ * Cette classe stocke tous les services (outils) du jeu et permet d'y accéder
+ * facilement depuis n'importe où dans le code.
+ * 
+ * Exemple d'utilisation :
+ *    Enregistrement (dans GameApplication.create())
+ *   serviceRegistry.register(AssetService.class, new AssetServiceImpl());
+ *   
+ *    Récupération (dans les écrans/systèmes)
+ *   AssetService assets = serviceRegistry.get(AssetService.class);
  */
 public final class ServiceRegistry implements Disposable {
     
@@ -32,7 +25,7 @@ public final class ServiceRegistry implements Disposable {
     private boolean disposed;
     
     /**
-     * Creates a new empty service registry.
+     * Crée un nouveau registre de services (vide au départ).
      */
     public ServiceRegistry() {
         this.services = new HashMap<>();
@@ -40,14 +33,12 @@ public final class ServiceRegistry implements Disposable {
     }
     
     /**
-     * Registers a service instance with its interface type.
-     * If a service of the same type already exists, it will be replaced.
-     * The old service will NOT be disposed automatically.
-     * @param serviceType The interface or class type (used as key)
-     * @param implementation The service instance
-     * @param <T> The service type
-     * @throws NullPointerException if serviceType or implementation is null
-     * @throws IllegalStateException if the registry has been disposed
+     * Enregistre un service dans le registre.
+     * 
+     * Si un service du même type existe déjà, il sera remplacé.
+     * 
+     * @param serviceType Le type du service (exemple : AssetService.class)
+     * @param implementation L'instance du service (exemple : new AssetServiceImpl())
      */
     public <T> void register(Class<T> serviceType, T implementation) {
         if (disposed) {
@@ -64,12 +55,12 @@ public final class ServiceRegistry implements Disposable {
     }
     
     /**
-     * Retrieves a service by its type.
-     * @param serviceType The service interface or class type
-     * @param <T> The service type
-     * @return The service instance
-     * @throws IllegalStateException if the service is not registered
-     * @throws NullPointerException if serviceType is null
+     * Récupère un service du registre.
+     * 
+     * Lance une erreur si le service n'existe pas.
+     * 
+     * @param serviceType Le type du service à récupérer
+     * @return Le service demandé
      */
     public <T> T get(Class<T> serviceType) {
         if (serviceType == null) {
@@ -90,11 +81,13 @@ public final class ServiceRegistry implements Disposable {
     }
     
     /**
-     * Retrieves a service by its type, returning Optional.empty() if not found.
-     * Use this when the service is optional or you want to handle absence gracefully.
-     * @param serviceType The service interface or class type
-     * @param <T> The service type
-     * @return Optional containing the service, or empty if not registered
+     * Récupère un service du registre (version sécurisée).
+     * 
+     * Retourne Optional.empty() si le service n'existe pas au lieu de lancer une erreur.
+     * Utile pour les services optionnels.
+     * 
+     * @param serviceType Le type du service à récupérer
+     * @return Optional contenant le service, ou vide si non trouvé
      */
     public <T> Optional<T> getOptional(Class<T> serviceType) {
         if (serviceType == null) {
@@ -112,21 +105,19 @@ public final class ServiceRegistry implements Disposable {
     }
     
     /**
-     * Checks if a service is registered.
-     * @param serviceType The service type to check
-     * @return true if registered, false otherwise
+     * Vérifie si un service est enregistré.
      */
     public boolean isRegistered(Class<?> serviceType) {
         return services.containsKey(serviceType);
     }
     
     /**
-     * Unregisters a service.
-     * The service will NOT be disposed automatically. Call dispose() on the
-     * service manually if needed.
-     * @param serviceType The service type to unregister
-     * @param <T> The service type
-     * @return The removed service instance, or null if not found
+     * Retire un service du registre.
+     * 
+     * Le service ne sera PAS fermé automatiquement. Appelez dispose()
+     * manuellement si nécessaire.
+     * 
+     * @return Le service retiré, ou null si non trouvé
      */
     public <T> T unregister(Class<T> serviceType) {
         Object service = services.remove(serviceType);
@@ -137,19 +128,18 @@ public final class ServiceRegistry implements Disposable {
     }
     
     /**
-     * Returns the number of registered services.
-     * @return Service count
+     * Retourne le nombre de services enregistrés.
      */
     public int size() {
         return services.size();
     }
     
     /**
-     * Disposes all registered services that implement Disposable.
-     * Services are disposed in reverse registration order to handle dependencies.
-     * After disposal, the registry cannot be used anymore.
-     * Thread Safety: This method is not thread-safe. Ensure all other
-     * threads have stopped accessing services before calling.
+     * Ferme tous les services enregistrés pour libérer la mémoire.
+     * 
+     * Les services sont fermés dans l'ordre inverse de leur enregistrement
+     * pour gérer les dépendances correctement.
+     * Après la fermeture, le registre ne peut plus être utilisé.
      */
     @Override
     public void dispose() {
@@ -176,8 +166,7 @@ public final class ServiceRegistry implements Disposable {
     }
     
     /**
-     * Checks if the registry has been disposed.
-     * @return true if disposed, false otherwise
+     * Vérifie si le registre a été fermé.
      */
     public boolean isDisposed() {
         return disposed;

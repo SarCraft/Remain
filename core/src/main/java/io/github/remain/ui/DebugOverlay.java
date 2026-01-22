@@ -10,11 +10,16 @@ import io.github.remain.domain.world.World;
 import io.github.remain.system.isometric.IsometricProjection;
 
 /**
- * Debug overlay (F3 menu) similar to Minecraft's debug screen.
- * Displays performance metrics, camera info, and world statistics.
+ * Overlay de debug (écran F3) similaire à celui de Minecraft.
  * 
- * @author SarCraft
- * @since 1.0
+ * Affiche des informations de débogage utiles :
+ * - Métriques de performance (FPS)
+ * - Informations de la caméra (position, zoom)
+ * - Statistiques du monde (taille, nombre de blocs)
+ * - Position de la souris
+ * - Bloc sélectionné
+ * 
+ * Appuyez sur F3 pour afficher/masquer.
  */
 public class DebugOverlay implements Disposable {
     
@@ -31,47 +36,36 @@ public class DebugOverlay implements Disposable {
     }
     
     /**
-     * Toggle the visibility of the debug overlay.
+     * Affiche/masque l'overlay de debug.
      */
     public void toggle() {
         visible = !visible;
-        Gdx.app.log("DebugOverlay", "Debug info " + (visible ? "enabled" : "disabled"));
+        Gdx.app.log("DebugOverlay", "Infos de debug " + (visible ? "activées" : "désactivées"));
     }
     
     /**
-     * Set the visibility of the debug overlay.
+     * Définit la visibilité de l'overlay de debug.
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
     
     /**
-     * Check if the debug overlay is visible.
+     * Vérifie si l'overlay de debug est visible.
      */
     public boolean isVisible() {
         return visible;
     }
     
     /**
-     * Render the debug overlay.
-     * @param batch SpriteBatch to draw with
-     * @param camera World camera
-     * @param world Game world
-     * @param screenHeight Screen height for positioning
+     * Dessine l'overlay de debug.
      */
     public void render(SpriteBatch batch, OrthographicCamera camera, World world, float screenHeight) {
         render(batch, camera, world, screenHeight, -1, -1, -1);
     }
     
     /**
-     * Render the debug overlay with tile selection info.
-     * @param batch SpriteBatch to draw with
-     * @param camera World camera
-     * @param world Game world
-     * @param screenHeight Screen height for positioning
-     * @param selectedX Selected tile X coordinate (-1 if none)
-     * @param selectedY Selected tile Y coordinate (-1 if none)
-     * @param selectedZ Selected tile Z coordinate (-1 if none)
+     * Dessine l'overlay de debug avec les informations de sélection de bloc.
      */
     public void render(SpriteBatch batch, OrthographicCamera camera, World world, 
                       float screenHeight, int selectedX, int selectedY, int selectedZ) {

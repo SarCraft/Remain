@@ -4,11 +4,12 @@ import com.badlogic.gdx.math.MathUtils;
 import io.github.remain.domain.world.BlockType;
 
 /**
- * Service for procedural terrain generation.
- * Uses multi-layered noise functions to generate realistic terrain with
- * height variation, biomes, and detail features.
- * @author SarCraft
- * @since 1.0
+ * Générateur de terrain procédural.
+ * 
+ * Utilise des fonctions de bruit (noise) pour créer un terrain
+ * réaliste avec des variations de hauteur, des biomes, et des détails.
+ * 
+ * Le même seed génère toujours le même terrain (utile pour le multijoueur).
  */
 public class TerrainGenerator {
     private final NoiseGenerator heightNoise;

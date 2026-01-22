@@ -8,23 +8,16 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents the entire game world as an aggregate root.
- * The World is the main domain entity that contains all blocks and manages
- * world generation, querying, and modification. It follows the aggregate root
- * pattern from Domain-Driven Design.
- * Design Rationale:
- *    - Encapsulates all world state (blocks)
- *    - Provides controlled access to blocks (no direct array access)
- *    - Manages world generation lifecycle
- *    - Optimizes rendering with visible block queries
- *    - Coordinates with TerrainGenerator for procedural generation
+ * Représente le monde entier du jeu.
  * 
- * Performance: For large worlds, consider chunk-based loading and
- * spatial indexing for faster queries.
- * Thread Safety: Not thread-safe. Synchronize externally if accessed
- * from multiple threads.
- * @author SarCraft
- * @since 1.0
+ * Le monde est une grille 3D qui contient tous les blocs (cubes) du jeu.
+ * Il gère la génération du terrain, l'ajout/suppression de blocs,
+ * et les requêtes pour trouver des blocs.
+ * 
+ * Dimensions :
+ * - Largeur (X) : nombre de colonnes
+ * - Profondeur (Z) : nombre de lignes
+ * - Hauteur (Y) : altitude/élévation
  */
 public final class World {
     
@@ -36,24 +29,28 @@ public final class World {
     private final long seed;
     
     /**
-     * Creates a new World with the specified dimensions and a random seed.
-     * @param width World width (X dimension)
-     * @param depth World depth (Z dimension)
-     * @param height World height (Y dimension)
+     * Crée un nouveau monde avec une graine aléatoire. (système minecraft de seeds)
+     * 
+     * @param width Largeur du monde (colonnes)
+     * @param depth Profondeur du monde (lignes)
+     * @param height Hauteur maximale du monde
      */
     public World(int width, int depth, int height) {
         this(width, depth, height, System.currentTimeMillis());
     }
     
     /**
-     * Creates a new World with the specified dimensions and seed.
-     * Using the same seed will generate identical worlds, useful for
-     * multiplayer, testing, and procedural generation.
-     * @param width World width (X dimension, grid columns)
-     * @param depth World depth (Z dimension, grid rows)
-     * @param height World height (Y dimension, elevation)
-     * @param seed Random seed for procedural generation
-     * @throws IllegalArgumentException if any dimension is <= 0
+     * Crée un nouveau monde avec une graine spécifique.
+     * 
+     * La même graine génère toujours le même monde. Utile pour :
+     * - Multijoueur (tout le monde a le même monde)
+     * - Tests (résultats prévisibles)
+     * - Partage de mondes intéressants
+     * 
+     * @param width Largeur du monde (colonnes)
+     * @param depth Profondeur du monde (lignes)
+     * @param height Hauteur maximale du monde
+     * @param seed Graine pour la génération aléatoire
      */
     public World(int width, int depth, int height, long seed) {
         if (width <= 0 || depth <= 0 || height <= 0) {
@@ -71,9 +68,10 @@ public final class World {
     }
     
     /**
-     * Generates the world terrain procedurally.
-     * This method fills the world with blocks based on noise functions
-     * and terrain rules from TerrainGenerator.
+     * Génère le terrain du monde de manière procédurale.
+     * 
+     * Remplit le monde avec des blocs en utilisant des fonctions de bruit
+     * et des règles de terrain (herbe en surface, terre en dessous, etc.).
      */
     private void generateWorld() {
         for (int x = 0; x < width; x++) {
@@ -84,9 +82,10 @@ public final class World {
     }
     
     /**
-     * Generates a single vertical column of blocks.
-     * @param x Grid column
-     * @param z Grid row
+     * Génère une colonne verticale de blocs.
+     * 
+     * @param x Colonne de la grille
+     * @param z Ligne de la grille
      */
     private void generateColumn(int x, int z) {
         // Get terrain height at this position
@@ -104,12 +103,11 @@ public final class World {
     }
     
     /**
-     * Determines the block type based on depth below surface.
-     * @param x Grid column
-     * @param z Grid row
-     * @param y Current elevation
-     * @param surfaceHeight Surface elevation at this column
-     * @return Block type, or null for air
+     * Détermine le type de bloc selon la profondeur sous la surface.
+     * 
+     * @param y Altitude actuelle
+     * @param surfaceHeight Altitude de la surface à cette position
+     * @return Type de bloc, ou null pour de l'air
      */
     private BlockType getBlockTypeForDepth(int x, int z, int y, int surfaceHeight) {
         if (y == surfaceHeight) {
@@ -122,11 +120,9 @@ public final class World {
     }
     
     /**
-     * Gets the block at the specified position.
-     * @param x Grid column
-     * @param z Grid row
-     * @param y Elevation
-     * @return The block, or null if out of bounds or air
+     * Récupère le bloc à une position donnée.
+     * 
+     * @return Le bloc, ou null si hors limites ou vide (air)
      */
     public Block getBlock(int x, int z, int y) {
         if (!isInBounds(x, z, y)) {
@@ -136,9 +132,7 @@ public final class World {
     }
     
     /**
-     * Gets the block at the specified position.
-     * @param position The 3D position
-     * @return The block, or null if out of bounds or air
+     * Récupère le bloc à une position donnée.
      */
     public Block getBlock(Position3D position) {
         Objects.requireNonNull(position, "position cannot be null");
@@ -146,13 +140,12 @@ public final class World {
     }
     
     /**
-     * Sets a block at the specified position.
-     * Use this for placing/removing blocks during gameplay.
-     * @param x Grid column
-     * @param z Grid row
-     * @param y Elevation
-     * @param block The block to set, or null to remove
-     * @return true if successful, false if out of bounds
+     * Place ou retire un bloc à une position.
+     * 
+     * Utile pour placer/casser des blocs pendant le jeu.
+     * 
+     * @param block Le bloc à placer, ou null pour retirer
+     * @return true si réussi, false si hors limites
      */
     public boolean setBlock(int x, int z, int y, Block block) {
         if (!isInBounds(x, z, y)) {
@@ -164,10 +157,7 @@ public final class World {
     }
     
     /**
-     * Sets a block at the specified position.
-     * @param position The 3D position
-     * @param block The block to set, or null to remove
-     * @return true if successful, false if out of bounds
+     * Place ou retire un bloc à une position.
      */
     public boolean setBlock(Position3D position, Block block) {
         Objects.requireNonNull(position, "position cannot be null");
@@ -175,11 +165,7 @@ public final class World {
     }
     
     /**
-     * Checks if coordinates are within world bounds.
-     * @param x Grid column
-     * @param z Grid row
-     * @param y Elevation
-     * @return true if in bounds, false otherwise
+     * Vérifie si une position est dans les limites du monde.
      */
     public boolean isInBounds(int x, int z, int y) {
         return x >= 0 && x < width &&
@@ -188,9 +174,7 @@ public final class World {
     }
     
     /**
-     * Checks if a position is within world bounds.
-     * @param position The position to check
-     * @return true if in bounds, false otherwise
+     * Vérifie si une position est dans les limites du monde.
      */
     public boolean isInBounds(Position3D position) {
         Objects.requireNonNull(position, "position cannot be null");
@@ -198,10 +182,12 @@ public final class World {
     }
     
     /**
-     * Gets all non-null blocks in the world.
-     * Performance Warning: This creates a new list and iterates all
-     * positions. Use {@link #getVisibleBlocks()} for rendering.
-     * @return List of all blocks
+     * Récupère tous les blocs du monde.
+     * 
+     * Attention : Cette méthode est lente car elle parcourt toutes les positions.
+     * Pour le rendu, utilisez plutôt getVisibleBlocks().
+     * 
+     * @return Liste de tous les blocs
      */
     public List<Block> getAllBlocks() {
         List<Block> allBlocks = new ArrayList<>();
@@ -221,12 +207,14 @@ public final class World {
     }
     
     /**
-     * Gets only the visible (top) blocks for efficient rendering.
-     * Returns only the highest non-null block in each column, which is
-     * sufficient for isometric rendering where lower blocks are occluded.
-     * Performance: Much faster than {@link #getAllBlocks()} for
-     * rendering purposes.
-     * @return List of visible blocks
+     * Récupère seulement les blocs visibles (en surface) pour le rendu.
+     * 
+     * Retourne uniquement le bloc le plus haut de chaque colonne, ce qui
+     * suffit pour le rendu isométrique (les blocs du dessous sont cachés).
+     * 
+     * Performance : Beaucoup plus rapide que getAllBlocks() pour le rendu.
+     * 
+     * @return Liste des blocs visibles
      */
     public List<Block> getVisibleBlocks() {
         List<Block> visibleBlocks = new ArrayList<>(width * depth);
@@ -248,40 +236,35 @@ public final class World {
     }
     
     /**
-     * Gets the world width (X dimension, grid columns).
-     * @return World width
+     * Retourne la largeur du monde (dimension X, colonnes).
      */
     public int getWidth() {
         return width;
     }
     
     /**
-     * Gets the world depth (Z dimension, grid rows).
-     * @return World depth
+     * Retourne la profondeur du monde (dimension Z, lignes).
      */
     public int getDepth() {
         return depth;
     }
     
     /**
-     * Gets the world height (Y dimension, elevation).
-     * @return World height
+     * Retourne la hauteur du monde (dimension Y, altitude).
      */
     public int getHeight() {
         return height;
     }
     
     /**
-     * Gets the random seed used for world generation.
-     * @return World generation seed
+     * Retourne la graine utilisée pour générer le monde.
      */
     public long getSeed() {
         return seed;
     }
     
     /**
-     * Gets the terrain generator used by this world.
-     * @return Terrain generator
+     * Retourne le générateur de terrain utilisé par ce monde.
      */
     public TerrainGenerator getTerrainGenerator() {
         return terrainGenerator;

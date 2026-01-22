@@ -56,7 +56,7 @@ public class StartupHelper {
      * non-Latin-alphabet characters (without this code, most LWJGL3 apps fail
      * immediately for those users). Returns whether a new JVM was started and
      * thus no code should be executed.
-     * <p>
+     * 
      * <u>Usage:</u>
      *
      * <pre><code>
@@ -185,7 +185,7 @@ public class StartupHelper {
      * {@code -XstartOnFirstThread} argument. Returns whether a new JVM was
      * started and thus no code should be executed. Redirects the output of the
      * new JVM to the old one.
-     * <p>
+     * 
      * <u>Usage:</u>
      *
      * <pre>

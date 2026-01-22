@@ -6,13 +6,11 @@ import com.badlogic.gdx.InputProcessor;
 import io.github.remain.service.input.InputService;
 
 /**
- * Default implementation of {@link InputService}.
- * This implementation uses libGDX's {@link InputMultiplexer} to manage
- * multiple input processors and delegates to {@link Gdx#input} for state queries.
- * Thread Safety: Not thread-safe. All methods should be called from
- * the main/render thread.
- * @author SarCraft
- * @since 1.0
+ * Implémentation du service de gestion des entrées.
+ * 
+ * Cette classe utilise InputMultiplexer de libGDX pour gérer
+ * plusieurs processeurs d'entrée et délègue les requêtes d'état
+ * à Gdx.input.
  */
 public final class InputServiceImpl implements InputService {
     
@@ -20,7 +18,7 @@ public final class InputServiceImpl implements InputService {
     private boolean inputEnabled;
     
     /**
-     * Creates a new InputServiceImpl and registers it with libGDX.
+     * Crée un nouveau service d'entrée et l'enregistre dans libGDX.
      */
     public InputServiceImpl() {
         this.multiplexer = new InputMultiplexer();

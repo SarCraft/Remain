@@ -1,41 +1,41 @@
 package io.github.remain.domain.world;
 
 /**
- * Enumeration of all block types in the game.
- * Each block type represents a different material with unique visual and
- * gameplay properties.
- * Design Rationale: Using an enum provides:
- *    - Type safety (can't pass invalid block types)
- *    - Exhaustiveness checking in switch statements
- *    - Centralized definition of all block types
- *    - Efficient comparison and EnumMap/EnumSet usage
+ * Énumération de tous les types de blocs du jeu.
  * 
- * @author SarCraft
- * @since 1.0
+ * Chaque type représente un matériau différent avec ses propres
+ * propriétés visuelles et de gameplay.
+ * 
+ * Types disponibles :
+ * - GRASS : Herbe (surface)
+ * - DIRT : Terre (sous la surface)
+ * - STONE : Pierre (profondeur)
+ * - WATER : Eau (liquide, non marchable)
  */
 public enum BlockType {
     
-    /** Grass block - surface vegetation. */
-    GRASS(0, "Grass", true),
+    /** Herbe - végétation de surface. */
+    GRASS(0, "Herbe", true),
     
-    /** Dirt block - subsurface material. */
-    DIRT(1, "Dirt", true),
+    /** Terre - matériau sous la surface. */
+    DIRT(1, "Terre", true),
     
-    /** Stone block - hard material, deep underground. */
-    STONE(2, "Stone", true),
+    /** Pierre - matériau dur, en profondeur. */
+    STONE(2, "Pierre", true),
     
-    /** Water block - liquid, not walkable. */
-    WATER(3, "Water", false);
+    /** Eau - liquide, non marchable. */
+    WATER(3, "Eau", false);
     
     private final int tileIndex;
     private final String displayName;
     private final boolean walkable;
     
     /**
-     * Creates a new BlockType.
-     * @param tileIndex Index in the texture atlas
-     * @param displayName Human-readable name
-     * @param walkable Whether entities can walk on this block
+     * Crée un nouveau type de bloc.
+     * 
+     * @param tileIndex Index dans l'atlas de textures
+     * @param displayName Nom lisible par l'humain
+     * @param walkable Si les entités peuvent marcher sur ce bloc
      */
     BlockType(int tileIndex, String displayName, boolean walkable) {
         this.tileIndex = tileIndex;
@@ -44,32 +44,29 @@ public enum BlockType {
     }
     
     /**
-     * Gets the tile index in the texture atlas.
-     * @return Tile index (used by renderer)
+     * Retourne l'index de la tuile dans l'atlas de textures.
+     * (Utilisé par le moteur de rendu pour trouver la bonne image)
      */
     public int getTileIndex() {
         return tileIndex;
     }
     
     /**
-     * Gets the human-readable display name.
-     * @return Display name
+     * Retourne le nom d'affichage lisible.
      */
     public String getDisplayName() {
         return displayName;
     }
     
     /**
-     * Checks if this block type is walkable.
-     * @return true if walkable, false otherwise
+     * Vérifie si on peut marcher sur ce type de bloc.
      */
     public boolean isWalkable() {
         return walkable;
     }
     
     /**
-     * Checks if this block type is solid (blocks movement).
-     * @return true if solid, false otherwise
+     * Vérifie si ce type de bloc est solide (bloque le mouvement).
      */
     public boolean isSolid() {
         return this != WATER;

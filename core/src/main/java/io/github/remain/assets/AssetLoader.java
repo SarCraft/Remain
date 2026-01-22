@@ -8,6 +8,17 @@ import io.github.remain.domain.world.BlockType;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Chargeur de ressources graphiques (images).
+ * 
+ * Cette classe charge et stocke toutes les textures (images) du jeu :
+ * - Le spritesheet (grande image contenant toutes les tuiles)
+ * - Les textures pour chaque type de bloc (herbe, terre, pierre, eau)
+ * - La texture de la grille
+ * 
+ * Les textures sont chargées une seule fois au démarrage et réutilisées
+ * tout au long du jeu pour de meilleures performances.
+ */
 public class AssetLoader implements Disposable {
     private Texture spritesheet;
     private Map<BlockType, TextureRegion> blockTextures;
@@ -17,7 +28,6 @@ public class AssetLoader implements Disposable {
     // Dimensions d'une tile isométrique dans le spritesheet
     private static final int TILE_WIDTH = 32;   // Largeur réelle d'une tile (32x32 pixels)
     private static final int TILE_HEIGHT = 32;  // Hauteur réelle d'une tile (32x32 pixels)
-    private static final int TILES_PER_ROW = 16; // 512 / 32 = 16 tiles par ligne
 
     public AssetLoader() {
         loadTextures();

@@ -3,14 +3,12 @@ package io.github.remain;
 import io.github.remain.core.GameApplication;
 
 /**
- * Legacy main entry point - redirects to {@link GameApplication}.
- * This class is kept for backwards compatibility with the existing launcher.
- * The actual application logic is now in {@link GameApplication}.
- * @deprecated Use {@link GameApplication} directly
- * @author SarCraft
- * @since 1.0
+ * Point d'entrée historique - redirige vers GameApplication.
+ * 
+ * Cette classe est conservée pour la compatibilité avec le lanceur existant.
+ * La vraie logique du jeu est maintenant dans GameApplication.
  */
 @Deprecated(since = "1.0", forRemoval = false)
 public class Main extends GameApplication {
-    // Inherits all behavior from GameApplication
+    // Hérite tout le comportement de GameApplication
 }

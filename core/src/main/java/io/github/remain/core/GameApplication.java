@@ -17,80 +17,55 @@ import io.github.remain.service.screen.ScreenManager;
 import io.github.remain.ui.screen.GameScreen;
 
 /**
- * Main application entry point for the Remain game.
- * This class is responsible for:
- *    - Initializing core libGDX resources (SpriteBatch, Cameras, Viewports)
- *    - Registering all application services in the ServiceRegistry
- *    - Managing the application lifecycle (create, resize, dispose)
- *    - Delegating screen management to ScreenManager
+ * Point d'entrée principal du jeu Remain.
  * 
- * Design Rationale: This class is intentionally thin. It focuses solely
- * on application bootstrap and lifecycle. All game logic is delegated to services
- * and screens, following the Single Responsibility Principle.
- * 
- * <p><b>Lifecycle Order:</b></p>
- * <ul>
- *   <li>create() - Initialize resources, register services, set initial screen</li>
- *   <li>resize() - Handle window resize events</li>
- *   <li>render() - Delegate to current screen (via ScreenManager)</li>
- *   <li>dispose() - Clean up all resources</li>
- * </ul>
- * 
- * @author SarCraft
- * @since 1.0
+ * Cette classe démarre le jeu et gère son cycle de vie :
+ * 1. create()  → Démarre le jeu et charge les ressources
+ * 2. render()  → Dessine le jeu à chaque image (60 fois par seconde)
+ * 3. resize()  → Ajuste l'affichage quand la fenêtre change de taille
+ * 4. dispose() → Libère la mémoire quand on ferme le jeu
  */
 public class GameApplication extends Game {
     
-    // Virtual screen dimensions (independent of window size)
+    // Taille de l'écran virtuel du jeu (1920x1080)
     private static final float VIRTUAL_WIDTH = 1920f;
     private static final float VIRTUAL_HEIGHT = 1080f;
     
-    // Core services and context
+    // Services du jeu (gestion des ressources, input, rendu, écrans)
     private ServiceRegistry serviceRegistry;
     private GameContext gameContext;
     private ScreenManager screenManager;
     
-    // Core resources (owned by this class)
-    private SpriteBatch batch;
-    private OrthographicCamera worldCamera;
-    private OrthographicCamera uiCamera;
-    private FitViewport worldViewport;
-    private ScreenViewport uiViewport;
+    // Outils de rendu libGDX
+    private SpriteBatch batch;              // Dessine les sprites/images
+    private OrthographicCamera worldCamera; // Caméra pour le monde du jeu
+    private OrthographicCamera uiCamera;    // Caméra pour l'interface utilisateur
+    private FitViewport worldViewport;      // Adapte le monde à la fenêtre
+    private ScreenViewport uiViewport;      // Adapte l'UI à la fenêtre
     
-    /**
-     * Creates a new GameApplication.
-     * Constructor is intentionally empty. All initialization happens in create()
-     * to follow libGDX lifecycle conventions.
-     */
     public GameApplication() {
         super();
     }
     
     /**
-     * Called once when the application is created.
-     * This is the main initialization method. It:
-     * <ul>
-     *   <li>Creates core libGDX resources</li>
-     *   <li>Initializes the service registry</li>
-     *   <li>Registers all services</li>
-     *   <li>Creates the game context</li>
-     *   <li>Sets the initial screen</li>
-     * </ul>
+     * Démarre le jeu - Appelée une seule fois au lancement.
      * 
-     * <p><b>Performance Note:</b> This method may take time. Consider showing
-     * a loading screen for production builds.</p>
+     * Cette méthode prépare tout ce dont le jeu a besoin :
+     * - Crée les outils de dessin (caméras, batch)
+     * - Initialise les services (ressources, input, rendu)
+     * - Affiche l'écran de jeu
      */
     @Override
     public void create() {
-        Gdx.app.log("GameApplication", "Initializing application...");
+        Gdx.app.log("GameApplication", "Démarrage du jeu...");
         
-        // Initialize core libGDX resources
+        // Étape 1 : Créer les outils de dessin
         initializeResources();
         
-        // Create service registry
+        // Étape 2 : Créer le registre des services
         serviceRegistry = new ServiceRegistry();
         
-        // Create game context
+        // Étape 3 : Créer le contexte (données partagées entre tous les écrans)
         gameContext = new GameContext(
             batch,
             worldCamera,
@@ -99,187 +74,170 @@ public class GameApplication extends Game {
             uiViewport
         );
         
-        // Register services (order matters for dependencies)
+        // Étape 4 : Enregistrer tous les services
         registerServices();
         
-        // Initialize screen manager
+        // Étape 5 : Récupérer le gestionnaire d'écrans
         screenManager = serviceRegistry.get(ScreenManager.class);
         
-        // Set initial screen (GameScreen for now, MenuScreen in production)
+        // Étape 6 : Afficher l'écran de jeu
         screenManager.setScreen(new GameScreen(serviceRegistry, gameContext));
         
-        Gdx.app.log("GameApplication", "Application initialized successfully");
-        Gdx.app.log("GameApplication", "Registered services: " + serviceRegistry.size());
+        Gdx.app.log("GameApplication", "Jeu démarré avec succès");
+        Gdx.app.log("GameApplication", "Services enregistrés : " + serviceRegistry.size());
     }
     
     /**
-     * Initializes core libGDX resources.
-     * Resources created here:
-     *    - SpriteBatch - Shared batch for all rendering
-     *    - WorldCamera - Camera for game world (uses FitViewport for scaling)
-     *    - UICamera - Separate camera for UI (uses ScreenViewport for pixel-perfect)
-     *    - Viewports - Handle different screen sizes and aspect ratios
+     * Crée les outils de base pour dessiner le jeu.
+     * 
+     * - batch : l'outil qui dessine toutes les images
+     * - worldCamera : la caméra qui regarde le monde du jeu
+     * - uiCamera : la caméra qui regarde l'interface (menu, scores, etc.)
      */
     private void initializeResources() {
-        Gdx.app.log("GameApplication", "Creating core resources...");
+        Gdx.app.log("GameApplication", "Création des ressources...");
         
-        // Create shared SpriteBatch (reused across all screens for performance)
+        // Créer le SpriteBatch (dessine toutes les images du jeu)
         batch = new SpriteBatch();
         
-        // World camera with FitViewport (maintains aspect ratio, scales content)
+        // Créer la caméra du monde (bouge avec le joueur)
         worldCamera = new OrthographicCamera();
         worldViewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, worldCamera);
         worldCamera.position.set(VIRTUAL_WIDTH / 2f, VIRTUAL_HEIGHT / 2f, 0);
         worldCamera.update();
         
-        // UI camera with ScreenViewport (pixel-perfect, no scaling)
+        // Créer la caméra de l'UI (reste fixe à l'écran)
         uiCamera = new OrthographicCamera();
         uiViewport = new ScreenViewport(uiCamera);
         uiCamera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
         uiCamera.update();
         
         Gdx.app.log("GameApplication", 
-            String.format("Virtual resolution: %.0fx%.0f", VIRTUAL_WIDTH, VIRTUAL_HEIGHT));
+            String.format("Résolution virtuelle : %.0fx%.0f", VIRTUAL_WIDTH, VIRTUAL_HEIGHT));
     }
     
     /**
-     * Registers all application services in the service registry.
-     * Registration Order: Services with no dependencies first,
-     * then services that depend on others.
-     * Adding New Services: Register them here following the pattern:
-     * {@code
-     * ServiceInterface service = new ServiceImplementation(dependencies...);
-     * serviceRegistry.register(ServiceInterface.class, service);
-     * }
+     * Enregistre tous les services du jeu.
+     * 
+     * Les services sont des outils spécialisés :
+     * - AssetService : charge les images et les sons
+     * - InputService : gère le clavier et la souris
+     * - RenderingService : dessine le jeu à l'écran
+     * - ScreenManager : change les écrans (menu, jeu, options)
      */
     private void registerServices() {
-        Gdx.app.log("GameApplication", "Registering services...");
+        Gdx.app.log("GameApplication", "Enregistrement des services...");
         
-        // Asset service (no dependencies)
+        // Service de gestion des ressources (images, sons, etc.)
         AssetService assetService = new AssetServiceImpl();
         serviceRegistry.register(AssetService.class, assetService);
         
-        // Input service (no dependencies)
+        // Service de gestion des entrées (clavier, souris)
         InputService inputService = new InputServiceImpl();
         serviceRegistry.register(InputService.class, inputService);
         
-        // Rendering service (depends on GameContext)
+        // Service de rendu (dessine le jeu)
         RenderingService renderingService = new RenderingServiceImpl(gameContext);
         serviceRegistry.register(RenderingService.class, renderingService);
         
-        // Screen manager (depends on Game reference for setScreen)
+        // Gestionnaire d'écrans (change entre menu, jeu, options)
         ScreenManager screenManager = new ScreenManager(this);
         serviceRegistry.register(ScreenManager.class, screenManager);
         
-        Gdx.app.log("GameApplication", "All services registered");
+        Gdx.app.log("GameApplication", "Tous les services sont prêts");
     }
     
     /**
-     * Called when the window is resized.
-     * Delegates resize to the game context and current screen.
-     * @param width New window width in pixels
-     * @param height New window height in pixels
+     * Appelée quand la fenêtre change de taille.
+     * Ajuste les caméras pour que le jeu reste bien affiché.
      */
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
         
-        // Update viewports
+        // Ajuste les viewports pour la nouvelle taille de fenêtre
         gameContext.resize(width, height);
         
         Gdx.app.log("GameApplication", 
-            String.format("Window resized to %dx%d", width, height));
+            String.format("Fenêtre redimensionnée : %dx%d", width, height));
     }
     
     /**
-     * Called every frame to render the game.
-     * This method:
-     * <ul>
-     *   <li>Clears the screen</li>
-     *   <li>Updates cameras</li>
-     *   <li>Delegates rendering to the current screen</li>
-     * </ul>
+     * Dessine le jeu - Appelée 60 fois par seconde (60 FPS).
      * 
-     * <p><b>Performance:</b> Keep this method as thin as possible. All logic
-     * should be in screens and systems.</p>
+     * 1. Efface l'écran (fond noir)
+     * 2. Met à jour les caméras
+     * 3. Dessine l'écran actuel (menu ou jeu)
      */
     @Override
     public void render() {
-        // Clear screen with black background
+        // Efface l'écran avec un fond noir
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        // Update cameras
+        // Met à jour les positions des caméras
         gameContext.updateCameras();
         
-        // Render current screen (handled by libGDX's Game class)
+        // Dessine l'écran actuel (géré automatiquement par libGDX)
         super.render();
     }
     
     /**
-     * Called when the application is paused (mobile) or minimized (desktop).
-     * Override to save game state or pause audio.
+     * Appelée quand le jeu est mis en pause (mobile) ou minimisé (PC).
      */
     @Override
     public void pause() {
         super.pause();
-        Gdx.app.log("GameApplication", "Application paused");
+        Gdx.app.log("GameApplication", "Jeu en pause");
     }
     
     /**
-     * Called when the application is resumed after being paused.
-     * Override to restore game state or resume audio.
+     * Appelée quand le jeu reprend après une pause.
      */
     @Override
     public void resume() {
         super.resume();
-        Gdx.app.log("GameApplication", "Application resumed");
+        Gdx.app.log("GameApplication", "Jeu repris");
     }
     
     /**
-     * Called when the application is destroyed.
-     * This method ensures all resources are properly disposed in the correct order:
-     * <ul>
-     *   <li>Dispose current screen (via super.dispose())</li>
-     *   <li>Dispose all services (via ServiceRegistry)</li>
-     *   <li>Dispose core resources (SpriteBatch, etc.)</li>
-     * </ul>
+     * Ferme le jeu proprement - Appelée à la fermeture.
      * 
-     * <p><b>Critical:</b> Failure to dispose resources causes memory leaks.</p>
+     * Libère toute la mémoire utilisée pour éviter les fuites mémoire :
+     * 1. Ferme l'écran actuel
+     * 2. Ferme tous les services
+     * 3. Libère les outils de dessin
      */
     @Override
     public void dispose() {
-        Gdx.app.log("GameApplication", "Disposing application...");
+        Gdx.app.log("GameApplication", "Fermeture du jeu...");
         
-        // Dispose current screen
+        // Ferme l'écran actuel
         super.dispose();
         
-        // Dispose all registered services
+        // Ferme tous les services enregistrés
         if (serviceRegistry != null) {
             serviceRegistry.dispose();
         }
         
-        // Dispose core resources
+        // Libère le SpriteBatch
         if (batch != null) {
             batch.dispose();
         }
         
-        Gdx.app.log("GameApplication", "Application disposed successfully");
+        Gdx.app.log("GameApplication", "Jeu fermé avec succès");
     }
     
     /**
-     * Gets the service registry for this application.
-     * Usage: Generally, you should not need to access this directly.
-     * Services are passed to screens via constructor.
-     * @return The service registry
+     * Récupère le registre des services.
+     * (Rarement utilisé directement - les services sont passés aux écrans)
      */
     public ServiceRegistry getServiceRegistry() {
         return serviceRegistry;
     }
     
     /**
-     * Gets the game context for this application.
-     * @return The game context
+     * Récupère le contexte du jeu (caméras, viewports, etc.).
      */
     public GameContext getGameContext() {
         return gameContext;

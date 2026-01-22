@@ -5,79 +5,74 @@ import com.badlogic.gdx.utils.Disposable;
 import io.github.remain.domain.world.BlockType;
 
 /**
- * Service interface for asset management and loading.
- * This service abstracts libGDX's AssetManager and provides a clean API for
- * loading and accessing game assets (textures, sounds, fonts, etc.).
- * Design Rationale: By using an interface, we can:
- *    - Mock asset loading in tests
- *    - Swap implementations (e.g., for different platforms)
- *    - Add caching layers without changing client code
- *    - Track asset lifecycle centrally
+ * Service de gestion des ressources graphiques (images, sons, etc.).
  * 
- * Thread Safety: Implementations should be thread-safe for asset loading,
- * but texture retrieval should happen on the render thread only.
- * Usage Pattern:
- * {@code
- * // Get service from registry
- * AssetService assets = serviceRegistry.get(AssetService.class);
- * // Load assets (typically in loading screen)
- * assets.loadAssets();
- * // Get textures (in render loop)
- * TextureRegion texture = assets.getBlockTexture(BlockType.GRASS);
- * }
- * @author SarCraft
- * @since 1.0
+ * Ce service charge et donne accès aux ressources du jeu :
+ * - Textures (images) des blocs
+ * - Sons
+ * - Polices de caractères
+ * - Autres fichiers du jeu
+ * 
+ * Exemple d'utilisation :
+ *   // Récupérer le service
+ *   AssetService assets = serviceRegistry.get(AssetService.class);
+ *   // Charger les ressources (au démarrage)
+ *   assets.loadAssets();
+ *   // Récupérer une texture (pendant le jeu)
+ *   TextureRegion texture = assets.getBlockTexture(BlockType.GRASS);
  */
 public interface AssetService extends Disposable {
     
     /**
-     * Loads all game assets synchronously.
-     * This method blocks until all assets are loaded. Use this for small games
-     * or during a loading screen.
-     * Performance: For large games, consider asynchronous loading
-     * with {@link #loadAssetsAsync()} and {@link #updateLoading()}.
+     * Charge toutes les ressources du jeu (de manière synchrone).
+     * 
+     * Cette méthode attend que tout soit chargé avant de continuer.
+     * Bien pour les petits jeux ou pendant un écran de chargement.
      */
     void loadAssets();
     
     /**
-     * Starts loading assets asynchronously.
-     * Call {@link #updateLoading()} each frame to continue loading.
-     * Check {@link #isLoadingComplete()} to know when loading finishes.
+     * Démarre le chargement des ressources (de manière asynchrone).
+     * 
+     * Appeler updateLoading() à chaque frame pour continuer le chargement.
+     * Vérifier isLoadingComplete() pour savoir quand c'est fini.
      */
     void loadAssetsAsync();
     
     /**
-     * Updates the asset loading process.
-     * Call this once per frame when loading asynchronously.
-     * Returns true when loading is complete.
-     * @return true if loading is complete, false otherwise
+     * Met à jour le processus de chargement.
+     * 
+     * À appeler une fois par frame lors du chargement asynchrone.
+     * 
+     * @return true si le chargement est terminé, false sinon
      */
     boolean updateLoading();
     
     /**
-     * Checks if asset loading is complete.
-     * @return true if all assets are loaded, false otherwise
+     * Vérifie si le chargement est terminé.
      */
     boolean isLoadingComplete();
     
     /**
-     * Gets the loading progress as a percentage.
-     * @return Loading progress (0.0 to 1.0)
+     * Récupère la progression du chargement en pourcentage.
+     * 
+     * @return Progression de 0.0 (0%) à 1.0 (100%)
      */
     float getLoadingProgress();
     
     /**
-     * Gets the texture region for a specific block type.
-     * Performance: This method should be fast (O(1) lookup from cache).
-     * Safe to call every frame.
-     * @param blockType The block type
-     * @return The texture region, or null if not found
+     * Récupère la texture d'un type de bloc spécifique.
+     * 
+     * Cette méthode est rapide (recherche instantanée).
+     * Peut être appelée à chaque frame sans problème.
+     * 
+     * @param blockType Le type de bloc
+     * @return La texture, ou null si non trouvée
      */
     TextureRegion getBlockTexture(BlockType blockType);
     
     /**
-     * Gets the grid/tile texture used for floor rendering.
-     * @return The grid texture region, or null if not loaded
+     * Récupère la texture de la grille utilisée pour le sol.
      */
     TextureRegion getGridTexture();
     

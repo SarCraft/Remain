@@ -7,10 +7,12 @@ import io.github.remain.system.GameSystem;
 import io.github.remain.system.isometric.IsometricProjection;
 
 /**
- * Handles camera movement, rotation, and zoom controls.
+ * Système de contrôle de la caméra (déplacement, rotation, zoom).
  * 
- * @author SarCraft
- * @since 1.0
+ * Ce système gère tous les contrôles de la caméra :
+ * - Déplacement avec WASD ou les flèches
+ * - Zoom avec la molette de la souris
+ * - Rotation de la vue avec Q/E
  */
 public class CameraControlSystem implements GameSystem {
     
@@ -46,7 +48,7 @@ public class CameraControlSystem implements GameSystem {
     }
     
     /**
-     * Handles keyboard-based camera movement.
+     * Gère le déplacement de la caméra au clavier.
      */
     private void handleCameraMovement(float delta) {
         float moveSpeed = CAMERA_SPEED * delta;
@@ -68,21 +70,21 @@ public class CameraControlSystem implements GameSystem {
     }
     
     /**
-     * Handles zoom via scroll wheel.
+     * Gère le zoom avec la molette de la souris.
      */
     public void handleZoom(float scrollAmount) {
         camera.zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, camera.zoom + scrollAmount * ZOOM_STEP));
     }
     
     /**
-     * Rotates the camera counter-clockwise.
+     * Fait tourner la caméra dans le sens inverse des aiguilles d'une montre.
      */
     public void rotateCounterClockwise() {
         IsometricProjection.rotateCameraCounterClockwise();
     }
     
     /**
-     * Rotates the camera clockwise.
+     * Fait tourner la caméra dans le sens des aiguilles d'une montre.
      */
     public void rotateClockwise() {
         IsometricProjection.rotateCameraClockwise();

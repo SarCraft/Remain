@@ -10,20 +10,19 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Default implementation of {@link AssetService}.
- * This implementation loads textures from a spritesheet and caches them
- * for efficient access. It uses libGDX's Texture and TextureRegion APIs.
- * Asset Structure:
- *    - Spritesheet: {@code blocks/spritesheet.png} (32x32 tiles)
- *    - Grid texture: Extracted from spritesheet
+ * Implémentation du service de gestion des ressources.
  * 
- * Performance Optimizations:
- *    - Single spritesheet to minimize texture swaps
- *    - Cached TextureRegions (no per-frame allocations)
- *    - Nearest-neighbor filtering for pixel-art style
+ * Cette classe charge les textures depuis un spritesheet (grande image
+ * contenant toutes les tuiles) et les met en cache pour un accès rapide.
  * 
- * @author SarCraft
- * @since 1.0
+ * Structure des ressources :
+ * - Spritesheet : blocks/spritesheet.png (tuiles de 32x32 pixels)
+ * - Texture de grille : Extraite du spritesheet
+ * 
+ * Optimisations :
+ * - Un seul spritesheet pour minimiser les changements de texture
+ * - Textures mises en cache (pas d'allocation mémoire à chaque frame)
+ * - Filtrage nearest-neighbor pour le style pixel-art
  */
 public final class AssetServiceImpl implements AssetService {
     
@@ -41,8 +40,8 @@ public final class AssetServiceImpl implements AssetService {
     private boolean loaded;
     
     /**
-     * Creates a new AssetServiceImpl.
-     * Assets are not loaded until {@link #loadAssets()} is called.
+     * Crée un nouveau service de ressources.
+     * Les ressources ne sont pas chargées avant l'appel à loadAssets().
      */
     public AssetServiceImpl() {
         this.blockTextures = new EnumMap<>(BlockType.class);
@@ -52,21 +51,21 @@ public final class AssetServiceImpl implements AssetService {
     @Override
     public void loadAssets() {
         if (loaded) {
-            Gdx.app.log("AssetService", "Assets already loaded");
+            Gdx.app.log("AssetService", "Ressources déjà chargées");
             return;
         }
         
-        Gdx.app.log("AssetService", "Loading assets...");
+        Gdx.app.log("AssetService", "Chargement des ressources...");
         
         loadSpritesheet();
         extractTextures();
         
         loaded = true;
-        Gdx.app.log("AssetService", "Assets loaded successfully");
+        Gdx.app.log("AssetService", "Ressources chargées avec succès");
     }
     
     /**
-     * Loads the main spritesheet texture.
+     * Charge la grande image (spritesheet) contenant toutes les tuiles.
      */
     private void loadSpritesheet() {
         spritesheet = new Texture(Gdx.files.internal(SPRITESHEET_PATH));
