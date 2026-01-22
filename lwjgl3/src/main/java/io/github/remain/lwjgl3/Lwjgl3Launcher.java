@@ -2,7 +2,7 @@ package io.github.remain.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import io.github.remain.core.GameApplication;
+import io.github.remain.game.GameApplication;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {

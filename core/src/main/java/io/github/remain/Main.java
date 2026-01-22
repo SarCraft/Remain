@@ -1,6 +1,6 @@
 package io.github.remain;
 
-import io.github.remain.core.GameApplication;
+import io.github.remain.game.GameApplication;
 
 /**
  * Point d'entrée historique - redirige vers GameApplication.

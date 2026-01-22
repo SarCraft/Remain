@@ -3,7 +3,7 @@ package io.github.remain.assets;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
-import io.github.remain.domain.world.BlockType;
+import io.github.remain.world.BlockType;
 
 import java.util.HashMap;
 import java.util.Map;

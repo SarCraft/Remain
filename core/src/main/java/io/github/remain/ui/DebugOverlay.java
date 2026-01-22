@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
-import io.github.remain.domain.world.World;
-import io.github.remain.system.isometric.IsometricProjection;
+import io.github.remain.world.World;
+import io.github.remain.rendering.IsometricProjection;
 
 /**
  * Overlay de debug (écran F3) similaire à celui de Minecraft.
@@ -78,11 +78,6 @@ public class DebugOverlay implements Disposable {
         // Title
         font.setColor(Color.YELLOW);
         font.draw(batch, "Remain - Debug Screen (F3)", PADDING_X, y);
-        y -= LINE_HEIGHT;
-        
-        // Separator
-        font.setColor(Color.WHITE);
-        font.draw(batch, "================================", PADDING_X, y);
         y -= LINE_HEIGHT;
         
         // FPS info
