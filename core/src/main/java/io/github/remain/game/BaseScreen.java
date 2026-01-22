@@ -14,14 +14,14 @@ import com.badlogic.gdx.Screen;
  *    - Tracks screen lifecycle state for debugging
  * 
  * Lifecycle Order:
- * <ul>
- *   <li>Constructor - Initialize screen-specific state</li>
- *   <li>show() - Screen becomes active, load resources</li>
- *   <li>render(delta) - Called every frame: update(delta) then renderFrame(delta)</li>
- *   <li>resize(width, height) - Window resized</li>
- *   <li>hide() - Screen becomes inactive, release temporary resources</li>
- *   <li>dispose() - Screen destroyed, release all resources</li>
- * </ul>
+ * 
+ *   Constructor - Initialize screen-specific state
+ *   show() - Screen becomes active, load resources
+ *   render(delta) - Called every frame: update(delta) then renderFrame(delta)
+ *   resize(width, height) - Window resized
+ *   hide() - Screen becomes inactive, release temporary resources
+ *   dispose() - Screen destroyed, release all resources
+ * 
  * 
  * Usage Pattern:
  * {@code
@@ -35,7 +35,7 @@ import com.badlogic.gdx.Screen;
  *     }
  *     @Override
  *     protected void update(float delta) {
- *         / Update game logic
+ *          Update game logic
  *     }
  *     @Override
  *     protected void renderFrame(float delta) {
@@ -97,10 +97,10 @@ public abstract class BaseScreen implements Screen {
     /**
      * Called every frame to update and render the screen.
      * This method splits rendering into two phases:
-     * <ul>
-     *   <li>{@link #update(float)} - Update game logic</li>
-     *   <li>{@link #renderFrame(float)} - Render graphics</li>
-     * </ul>
+     * 
+     *   {@link #update(float)} - Update game logic
+     *   {@link #renderFrame(float)} - Render graphics
+     * 
      * 
      * This separation makes it easier to reason about game logic vs rendering.
      * 
